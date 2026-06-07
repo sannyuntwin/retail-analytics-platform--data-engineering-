@@ -1,0 +1,22 @@
+app:
+  name: RetailAnalyticsProd
+  environment: prod
+
+paths:
+  raw_file: data/raw/OnlineRetail.xlsx
+  bronze_online_retail: data/bronze/online_retail
+  silver_sales: data/silver/sales
+  gold_dim_customer: data/gold/dim_customer
+  gold_dim_product: data/gold/dim_product
+  gold_dim_date: data/gold/dim_date
+  gold_fact_sales: data/gold/fact_sales
+
+spark:
+  master: local[*]
+  log_level: WARN
+  configs:
+    spark.sql.session.timeZone: UTC
+    spark.sql.shuffle.partitions: "16"
+
+quality:
+  fail_on_warning: true

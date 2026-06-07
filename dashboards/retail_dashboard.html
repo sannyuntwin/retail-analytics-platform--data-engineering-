@@ -1,0 +1,258 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Retail Analytics Dashboard</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --bg: #f6f7f9;
+      --panel: #ffffff;
+      --ink: #17202a;
+      --muted: #667085;
+      --line: #d9dee7;
+      --blue: #2563eb;
+      --green: #059669;
+      --rose: #e11d48;
+      --amber: #d97706;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--ink);
+      font-family: Inter, Segoe UI, Arial, sans-serif;
+    }
+    header {
+      padding: 28px 32px 18px;
+      border-bottom: 1px solid var(--line);
+      background: #fff;
+    }
+    h1 {
+      margin: 0;
+      font-size: 28px;
+      font-weight: 760;
+      letter-spacing: 0;
+    }
+    .subtitle {
+      margin-top: 6px;
+      color: var(--muted);
+      font-size: 14px;
+    }
+    main {
+      padding: 24px 32px 36px;
+      display: grid;
+      gap: 20px;
+    }
+    .kpis {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(160px, 1fr));
+      gap: 14px;
+    }
+    .card {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 18px;
+      min-width: 0;
+    }
+    .label {
+      color: var(--muted);
+      font-size: 13px;
+      font-weight: 650;
+      text-transform: uppercase;
+    }
+    .value {
+      margin-top: 8px;
+      font-size: 28px;
+      font-weight: 780;
+    }
+    .grid {
+      display: grid;
+      grid-template-columns: minmax(0, 1.5fr) minmax(320px, 1fr);
+      gap: 20px;
+    }
+    h2 {
+      margin: 0 0 14px;
+      font-size: 17px;
+      letter-spacing: 0;
+    }
+    canvas {
+      width: 100%;
+      height: 320px;
+      display: block;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px;
+    }
+    th, td {
+      padding: 10px 8px;
+      border-bottom: 1px solid var(--line);
+      text-align: left;
+      vertical-align: top;
+    }
+    th {
+      color: var(--muted);
+      font-size: 12px;
+      text-transform: uppercase;
+    }
+    td:last-child, th:last-child {
+      text-align: right;
+      white-space: nowrap;
+    }
+    .product-code {
+      font-weight: 720;
+      white-space: nowrap;
+    }
+    @media (max-width: 920px) {
+      header, main { padding-left: 18px; padding-right: 18px; }
+      .kpis, .grid { grid-template-columns: 1fr; }
+      canvas { height: 280px; }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Retail Analytics Dashboard</h1>
+    <div class="subtitle">Cleaned Online Retail sales summary from local Excel data</div>
+  </header>
+  <main>
+    <section class="kpis">
+      <div class="card"><div class="label">Revenue</div><div class="value" id="kpi-revenue"></div></div>
+      <div class="card"><div class="label">Orders</div><div class="value" id="kpi-orders"></div></div>
+      <div class="card"><div class="label">Customers</div><div class="value" id="kpi-customers"></div></div>
+      <div class="card"><div class="label">Countries</div><div class="value" id="kpi-countries"></div></div>
+    </section>
+    <section class="grid">
+      <div class="card">
+        <h2>Monthly Revenue</h2>
+        <canvas id="monthlyChart" width="900" height="320"></canvas>
+      </div>
+      <div class="card">
+        <h2>Revenue by Country</h2>
+        <canvas id="countryChart" width="520" height="320"></canvas>
+      </div>
+    </section>
+    <section class="card">
+      <h2>Top Products</h2>
+      <table>
+        <thead>
+          <tr><th>Stock Code</th><th>Description</th><th>Qty Sold</th><th>Revenue</th></tr>
+        </thead>
+        <tbody id="products"></tbody>
+      </table>
+    </section>
+  </main>
+  <script>
+    const data = {"kpis": {"revenue": "$8,911,408", "orders": "18,532", "customers": "4,338", "countries": "37"}, "monthly": {"labels": ["2010-12", "2011-01", "2011-02", "2011-03", "2011-04", "2011-05", "2011-06", "2011-07", "2011-08", "2011-09", "2011-10", "2011-11", "2011-12"], "values": [572713.89, 569445.04, 447137.35, 595500.76, 469200.36, 678594.56, 661213.69, 600091.01, 645343.9, 952838.38, 1039318.79, 1161817.38, 518192.79]}, "country": {"labels": ["United Kingdom", "Netherlands", "EIRE", "Germany", "France", "Australia", "Spain", "Switzerland", "Belgium", "Sweden"], "values": [7308391.55, 285446.34, 265545.9, 228867.14, 209024.05, 138521.31, 61577.11, 56443.95, 41196.34, 38378.33], "orders": [16646, 94, 260, 457, 389, 57, 90, 51, 98, 36]}, "products": [{"stock_code": "23843", "description": "PAPER CRAFT , LITTLE BIRDIE", "quantity": 80995, "revenue": "$168,470"}, {"stock_code": "22423", "description": "REGENCY CAKESTAND 3 TIER", "quantity": 12402, "revenue": "$142,593"}, {"stock_code": "85123A", "description": "WHITE HANGING HEART T-LIGHT HOLDER", "quantity": 36725, "revenue": "$100,448"}, {"stock_code": "85099B", "description": "JUMBO BAG RED RETROSPOT", "quantity": 46181, "revenue": "$85,221"}, {"stock_code": "23166", "description": "MEDIUM CERAMIC TOP STORAGE JAR", "quantity": 77916, "revenue": "$81,417"}, {"stock_code": "POST", "description": "POSTAGE", "quantity": 3120, "revenue": "$77,804"}, {"stock_code": "47566", "description": "PARTY BUNTING", "quantity": 15291, "revenue": "$68,844"}, {"stock_code": "84879", "description": "ASSORTED COLOUR BIRD ORNAMENT", "quantity": 35362, "revenue": "$56,580"}, {"stock_code": "M", "description": "Manual", "quantity": 7173, "revenue": "$53,780"}, {"stock_code": "23084", "description": "RABBIT NIGHT LIGHT", "quantity": 27202, "revenue": "$51,346"}]};
+    const colors = ["#2563eb", "#059669", "#e11d48", "#d97706", "#7c3aed", "#0891b2", "#db2777", "#4f46e5", "#16a34a", "#ea580c"];
+
+    document.getElementById("kpi-revenue").textContent = data.kpis.revenue;
+    document.getElementById("kpi-orders").textContent = data.kpis.orders;
+    document.getElementById("kpi-customers").textContent = data.kpis.customers;
+    document.getElementById("kpi-countries").textContent = data.kpis.countries;
+
+    document.getElementById("products").innerHTML = data.products.map(product => `
+      <tr>
+        <td class="product-code">${product.stock_code}</td>
+        <td>${product.description}</td>
+        <td>${product.quantity.toLocaleString()}</td>
+        <td>${product.revenue}</td>
+      </tr>
+    `).join("");
+
+    function money(value) {
+      return "$" + Math.round(value).toLocaleString();
+    }
+
+    function setupCanvas(canvas) {
+      const ratio = window.devicePixelRatio || 1;
+      const rect = canvas.getBoundingClientRect();
+      canvas.width = Math.floor(rect.width * ratio);
+      canvas.height = Math.floor(rect.height * ratio);
+      const ctx = canvas.getContext("2d");
+      ctx.scale(ratio, ratio);
+      return { ctx, width: rect.width, height: rect.height };
+    }
+
+    function drawLineChart(canvas, labels, values) {
+      const { ctx, width, height } = setupCanvas(canvas);
+      const pad = { top: 18, right: 18, bottom: 48, left: 72 };
+      const plotW = width - pad.left - pad.right;
+      const plotH = height - pad.top - pad.bottom;
+      const max = Math.max(...values) * 1.12;
+      ctx.clearRect(0, 0, width, height);
+      ctx.strokeStyle = "#d9dee7";
+      ctx.lineWidth = 1;
+      ctx.font = "12px Segoe UI, Arial";
+      ctx.fillStyle = "#667085";
+      for (let i = 0; i <= 4; i++) {
+        const y = pad.top + plotH - (plotH * i / 4);
+        const val = max * i / 4;
+        ctx.beginPath();
+        ctx.moveTo(pad.left, y);
+        ctx.lineTo(width - pad.right, y);
+        ctx.stroke();
+        ctx.fillText(money(val), 8, y + 4);
+      }
+      ctx.strokeStyle = "#2563eb";
+      ctx.lineWidth = 3;
+      ctx.beginPath();
+      values.forEach((value, index) => {
+        const x = pad.left + (plotW * index / Math.max(values.length - 1, 1));
+        const y = pad.top + plotH - (value / max * plotH);
+        if (index === 0) ctx.moveTo(x, y);
+        else ctx.lineTo(x, y);
+      });
+      ctx.stroke();
+      ctx.fillStyle = "#2563eb";
+      values.forEach((value, index) => {
+        const x = pad.left + (plotW * index / Math.max(values.length - 1, 1));
+        const y = pad.top + plotH - (value / max * plotH);
+        ctx.beginPath();
+        ctx.arc(x, y, 3.5, 0, Math.PI * 2);
+        ctx.fill();
+      });
+      ctx.fillStyle = "#667085";
+      labels.forEach((label, index) => {
+        if (index % Math.ceil(labels.length / 8) !== 0) return;
+        const x = pad.left + (plotW * index / Math.max(labels.length - 1, 1));
+        ctx.save();
+        ctx.translate(x - 16, height - 16);
+        ctx.rotate(-0.55);
+        ctx.fillText(label, 0, 0);
+        ctx.restore();
+      });
+    }
+
+    function drawBarChart(canvas, labels, values) {
+      const { ctx, width, height } = setupCanvas(canvas);
+      const pad = { top: 12, right: 18, bottom: 28, left: 132 };
+      const rowH = (height - pad.top - pad.bottom) / labels.length;
+      const max = Math.max(...values) * 1.1;
+      ctx.clearRect(0, 0, width, height);
+      ctx.font = "12px Segoe UI, Arial";
+      labels.forEach((label, index) => {
+        const y = pad.top + index * rowH;
+        const barW = (width - pad.left - pad.right) * values[index] / max;
+        ctx.fillStyle = "#667085";
+        ctx.fillText(label.slice(0, 18), 8, y + rowH * 0.62);
+        ctx.fillStyle = colors[index % colors.length];
+        ctx.fillRect(pad.left, y + rowH * 0.2, barW, rowH * 0.5);
+        ctx.fillStyle = "#17202a";
+        ctx.fillText(money(values[index]), pad.left + barW + 8, y + rowH * 0.62);
+      });
+    }
+
+    function drawAll() {
+      drawLineChart(document.getElementById("monthlyChart"), data.monthly.labels, data.monthly.values);
+      drawBarChart(document.getElementById("countryChart"), data.country.labels, data.country.values);
+    }
+    window.addEventListener("resize", drawAll);
+    drawAll();
+  </script>
+</body>
+</html>

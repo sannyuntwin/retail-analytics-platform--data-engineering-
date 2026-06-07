@@ -1,0 +1,8 @@
+flowchart TD
+    A[Raw Excel] --> B[Load with pandas]
+    B --> C[Create Spark DataFrame]
+    C --> D[Write Bronze]
+    D --> E[Clean and Type Sales]
+    E --> F[Validate Silver]
+    F --> G[Build Gold Tables]
+    G --> H[SQL Analytics]

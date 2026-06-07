@@ -1,0 +1,11 @@
+flowchart LR
+    raw[OnlineRetail.xlsx] --> bronze[Bronze Parquet]
+    bronze --> silver[Silver Sales]
+    silver --> customer[dim_customer]
+    silver --> product[dim_product]
+    silver --> date[dim_date]
+    silver --> fact[fact_sales]
+    customer --> dashboard[Dashboards]
+    product --> dashboard
+    date --> dashboard
+    fact --> dashboard
